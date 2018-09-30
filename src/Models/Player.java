@@ -6,12 +6,14 @@ public class Player {
     private double asset;
     private int score;
     private double bet;
+    private boolean isDealer;
 
     public Player(String user, int bet){
         this.uName = user;
         this.asset = 500;
         this.score = 0;
         this.bet   = bet;
+        this.isDealer = false;
     }
 
     private boolean broken() {
@@ -37,8 +39,16 @@ public class Player {
         return bet;
     }
 
+    public boolean isDealer() {
+        return isDealer;
+    }
+
     public void setBet(double bet) {
         this.bet = bet;
+    }
+
+    public void setDealer() {
+        isDealer = true;
     }
 
     public void updateScore(int score) {

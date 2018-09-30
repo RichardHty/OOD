@@ -1,6 +1,6 @@
 package Models;
 
-class Card {
+public class Card {
     private boolean isAce;
     private int score;
     private String face;
