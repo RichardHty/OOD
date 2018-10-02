@@ -1,28 +1,71 @@
 package Models;
 
 
+import com.sun.org.apache.regexp.internal.RE;
+
+import java.util.*;
+
+import static Models.Constants.WIN;
+
 public class Player {
     private String uName;
     private double asset;
-    private int score;
     private double bet;
     private boolean isDealer;
+    private List<CardSet> currentCards;
 
-    public Player(String user, int bet){
+    public Player(){
+        this.uName = "Dealer";
+        this.asset = 500;
+        this.bet   = 0;
+        this.isDealer = true;
+        this.currentCards = new ArrayList<>();
+        this.currentCards.add(new CardSet());
+    }
+    public Player(String user){
         this.uName = user;
         this.asset = 500;
-        this.score = 0;
-        this.bet   = bet;
+        this.bet   = 0;
         this.isDealer = false;
+        this.currentCards = new ArrayList<>();
+        this.currentCards.add(new CardSet());
+
     }
 
-    private boolean broken() {
-        return asset <= 0;
+    public boolean broken() {
+        boolean flag =  true;
+        for(CardSet cardSet:currentCards){
+            if(!cardSet.getStand()){
+                flag = false;
+            }
+        }
+        flag &= asset <= 0;
+        return flag;
     }
-    public void resetScoreAndBet() {
-        this.score = 0;
-        this.bet = 0;
+
+    public boolean splitCurrentCards(int i) {
+        CardSet currentCardSetToSplit = currentCards.get(i);
+        if(!currentCardSetToSplit.isCurrentCardsSplittable()){
+            return false;
+        }
+        if(asset < bet){
+            return false;
+        }
+
+        CardSet list = new CardSet();
+        list.addCard(currentCardSetToSplit.removeCard(1));
+        currentCardSetToSplit.disableCurrentCardsSplittable();
+
+        currentCards.add(i+1,list);
+        setBet(bet,i+1);
+
+        return true;
     }
+    public boolean addCardToCardSet(Card card, int i) {
+        currentCards.get(i).addCard(card);
+        return currentCards.get(i).isCurrentCardsSplittable();
+    }
+
     public String getuName() {
         return uName;
     }
@@ -31,9 +74,6 @@ public class Player {
         return asset;
     }
 
-    public int getScore() {
-        return score;
-    }
 
     public double getBet() {
         return bet;
@@ -43,26 +83,37 @@ public class Player {
         return isDealer;
     }
 
-    public void setBet(double bet) {
-        this.bet = bet;
+    public boolean setBet(double bet, int index) {
+        if(bet > asset || bet <= 0) {
+            return false;
+        }
+        this.bet   += bet;
+        this.asset -= bet;
+        this.getCurrentCardSet(index).setBet(bet);
+        return true;
     }
 
     public void setDealer() {
         isDealer = true;
     }
 
-    public void updateScore(int score) {
-        this.score = score;
+    public List<CardSet> getCurrentCards() {
+        return currentCards;
     }
-
-    public void updateAsset(int type) {
-
-        if(type == Constants.WIN) {
-            asset += bet;
-        } else if(type == Constants.LOSE){
-            asset -= bet;
-            asset = asset<0? 0:asset;
-        }
+    public CardSet getCurrentCardSet(int i) {
+        return currentCards.get(i);
+    }
+    public int getCurrentCardSetNum() {
+        return currentCards.size();
+    }
+    public void resetCardsAndBet(){
+        this.currentCards = new ArrayList<>();
+        this.currentCards.add(new CardSet());
+        this.bet = 0;
+    }
+    public void updateAsset(int index, int type) {
+        if(type == WIN)
+            this.asset += 2 * currentCards.get(index).getBet();
     }
 
     @Override

@@ -2,9 +2,10 @@ package Models;
 
 public class Constants {
 
-    static int WIN = 1;
-    static int LOSE = 2;
+    public static int WIN = 1;
+    public static int LOSE = 2;
 
+    static int SPLIT_LIMIT = 3;
 
 
     static String[] SUIT_SYMBOLS = {"♡", "♢", "♧", "♤"};
@@ -16,6 +17,8 @@ public class Constants {
 
     public static int MODE_PLAYER_PLAYER = 0;
     public static int MODE_PLAYER_COMPUTER = 1;
+
+
 
 
 

@@ -16,9 +16,9 @@ public class Card {
             face = Constants.FACE_SYMBOLS[x - 9];
 
         } else {
-            face = String.valueOf(x);
+            face = String.valueOf(x + 1);
         }
-        score = x + 1;
+        score = x + 1 > 10? 10:x+1;
         suit = Constants.SUIT_SYMBOLS[y];
     }
 
@@ -36,5 +36,14 @@ public class Card {
 
     public String getSuit() {
         return suit;
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+//                "score='" + score + '\'' +
+                "face='" + face + '\'' +
+                ", suit='" + suit + '\'' +
+                '}';
     }
 }

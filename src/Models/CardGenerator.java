@@ -2,7 +2,7 @@ package Models;
 
 import java.util.Random;
 
-public class Cards {
+public class CardGenerator {
 
     private boolean[] remaining;
     private int count;
@@ -10,7 +10,7 @@ public class Cards {
     private int cardsKind;
     private int suitKind;
 
-    public Cards (int cardsNumLimit, int cardsKind, int suitKind){
+    public CardGenerator(int cardsNumLimit, int cardsKind, int suitKind){
         remaining = new boolean[cardsNumLimit];
         count = 0;
         cardsLimit = cardsNumLimit;
@@ -25,8 +25,9 @@ public class Cards {
             x = rand.nextInt(cardsKind);
             y = rand.nextInt(suitKind);
         }
+        // todo:if run out of cards
         count ++;
-        remaining[x * suitKind+ y]= true;
+        remaining[x * suitKind+ y] = true;
 
         return new Card(x, y);
     }
