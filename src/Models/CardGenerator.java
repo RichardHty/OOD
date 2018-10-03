@@ -34,9 +34,6 @@ public class CardGenerator {
         }
         return cardGenerator;
     }
-    public int getCardsLimit() {
-        return cardsLimit;
-    }
 
     public Card getACard() {
         if(count >= cardsLimit){

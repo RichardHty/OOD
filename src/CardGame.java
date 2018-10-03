@@ -4,9 +4,9 @@ import Models.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-class CardGame {
-    CardGenerator cardGenerator;
-    List<Player> players;
+abstract public class CardGame {
+    protected CardGenerator cardGenerator;
+    protected List<Player> players;
     
     CardGame() { }
     CardGame(int cardsNumLimit, int cardsKind, int suitKind) {
@@ -14,5 +14,5 @@ class CardGame {
         players = new ArrayList<>();
     }
 
-
+    abstract public void start();
 }

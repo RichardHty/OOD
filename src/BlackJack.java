@@ -31,7 +31,7 @@ public class BlackJack extends CardGame{
         this.scanner = new Scanner(System.in);
         this.playerList = new ArrayList<>();
     }
-
+    @Override
     public void start() {
         // set dealer, set user name
         if(mode == Constants.MODE_PLAYER_PLAYER) {
@@ -53,6 +53,7 @@ public class BlackJack extends CardGame{
 
         displayAllPlayerAssets();
     }
+
     public boolean play() {
 
         // deal two cards for each player
