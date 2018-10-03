@@ -45,7 +45,7 @@ abstract public class Player {
 
     @Override
     public String toString() {
-        return "Hello," + uName  +
+        return "Hello, " + uName  +
                 ", you have " + asset +
                 " dollars.";
     }

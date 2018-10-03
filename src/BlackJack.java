@@ -18,7 +18,7 @@ public class BlackJack extends CardGame{
     BlackJack(int numOfPlayers, int mode) {
         this.mode = mode;
         this.currentPlayerAmount = numOfPlayers;
-        this.cardGenerator = BlackJackPlayerOperation.defaultCardGenerator();
+        this.cardGenerator = CardGenerator.getInstanceOfCardGenerator();
         this.dealerIndex = 0;
         this.scanner = new Scanner(System.in);
         this.playerList = new ArrayList<>();
@@ -43,13 +43,13 @@ public class BlackJack extends CardGame{
                 playerList.add(new BlackJackPlayer());
                 continue;
             }
-            System.out.println("What is your name: ");
+            System.out.println("What is the name of player "+(i+1)+" :");
             playerList.add(new BlackJackPlayer(getInput()));
         }
         playerList.get(dealerIndex).setDealer();
         this.dealer = playerList.get(dealerIndex);
 
-        op = new BlackJackPlayerOperation(playerList.get(dealerIndex),0, cardGenerator);
+        op = new BlackJackPlayerOperation(playerList.get(dealerIndex),0);
 
         displayAllPlayerAssets();
     }
@@ -69,7 +69,7 @@ public class BlackJack extends CardGame{
 
         // display result for dealer
         dealerHitUntilFinished();
-        System.out.println("For dealer");
+        System.out.println("\nFor dealer");
         op.setOperationObj(dealer, 0);
         op.displayCardSetInfo();
 
@@ -81,6 +81,7 @@ public class BlackJack extends CardGame{
         boolean flag = isAllPlayerQuit(currentPlayers);
         playerList = currentPlayers;
         cardGenerator.reset();
+        System.out.println();
         return flag;
     }
 
@@ -177,93 +178,26 @@ public class BlackJack extends CardGame{
             if(p.isDealer()){
                 continue;
             }
+            System.out.println();
             displayWinOrLoss(p);
             displayPlayerAsset(p);
         }
+        System.out.println();
     }
     private void displayPlayerAsset(BlackJackPlayer player){
         System.out.println(player);
     }
     private void displayAllPlayerAssets() {
         System.out.println();
+        System.out.println("Current player info:");
         for(BlackJackPlayer p : playerList) {
             if(p.isDealer()) {
                 continue;
             }
             System.out.println(p);
         }
+        System.out.println();
     }
-
-    private boolean operationForEachCardSet(BlackJackPlayer userPlayer){
-        String input;
-        boolean flag = true;
-        int hands = userPlayer.getCurrentCardSetNum();
-        op.setOperationObj(userPlayer,0);
-
-        System.out.println(userPlayer.getuName()+", you get");
-
-        for(int i=0;i<hands;i++){
-            CardSet cardSet = userPlayer.getCurrentCardSet(i);
-            boolean cardSetSplittable = cardSet.isCurrentCardsSplittable();
-            op.setCardSetIndex(i);
-
-            if(!cardSet.getStand() && cardSet.calculateScore() >= 21){
-                if(cardSet.calculateScore() == 21){
-                    flag &= true;
-                }
-                cardSet.setStand();
-                System.out.println("For hand "+(i+1)+",");
-                op.displayCardSetInfo();
-
-            }
-            if(cardSet.getStand()){
-                flag &= true;
-                continue;
-            }
-            System.out.print("For hand "+(i+1)+",");
-            op.displayCardSetInfo();
-
-            boolean canBeDouble = userPlayer.getAsset() > cardSet.getBet();
-            input = chooseOperation(cardSetSplittable, canBeDouble);
-
-            if ("hit".equalsIgnoreCase(input)) {
-                op.hitOperation();
-                flag &= false;
-            } else if("split".equalsIgnoreCase(input)){
-                op.splitOperation();
-                flag &= false;
-            } else if("dd".equalsIgnoreCase(input) || "double down".equalsIgnoreCase(input)) {
-                flag &= op.doubleDownOperation();
-            } else if("stand".equalsIgnoreCase(input) || cardSet.getStand()) {
-                op.standOperation();
-                flag &= true;
-            } else {
-                System.out.println("Input error");
-                flag &= false;
-            }
-
-        }
-        return flag;
-
-    }
-    private String chooseOperation(boolean cardSetSplittable, boolean carSetDouble){
-        String input;
-        String options = "Hit, stand";
-        if (carSetDouble) {
-            options += ", double down";
-        }
-        if (cardSetSplittable) {
-            options += ", split";
-        }
-        options += " ?";
-        do {
-            System.out.println(options);
-            input = getInput();
-        } while (!isOperationInputValid(input));
-        return input;
-    }
-
-
     private void displayWinOrLoss(BlackJackPlayer userPlayer){
         List<Boolean> wonCardSetsForThisPlayer = carSetWinnerCalculation(userPlayer);
         int i = 0;
@@ -287,5 +221,79 @@ public class BlackJack extends CardGame{
         }
     }
 
+    private boolean operationForEachCardSet(BlackJackPlayer userPlayer){
+        String input;
+        boolean flag = true;
+        int hands = userPlayer.getCurrentCardSetNum();
+        op.setOperationObj(userPlayer,0);
+
+        System.out.println("\n"+userPlayer.getuName()+", you get");
+
+        for(int i=0;i<hands;i++){
+            CardSet cardSet = userPlayer.getCurrentCardSet(i);
+            boolean cardSetSplittable = cardSet.isCurrentCardsSplittable();
+            op.setCardSetIndex(i);
+
+            if(!cardSet.getStand() && cardSet.calculateScore() >= 21){
+                if(cardSet.calculateScore() == 21){
+                    flag &= true;
+                }
+                cardSet.setStand();
+                System.out.println("For hand "+(i+1)+",");
+                op.displayCardSetInfo();
+
+            }
+            if(cardSet.getStand()){
+                flag &= true;
+                continue;
+            }
+            System.out.println("For hand "+(i+1)+",");
+            op.displayCardSetInfo();
+
+            boolean canBeDouble = userPlayer.getAsset() > cardSet.getBet();
+            int count = 1;
+            while(count > 0) {
+                count --;
+                input = chooseOperation(cardSetSplittable, canBeDouble);
+
+                if ("hit".equalsIgnoreCase(input)) {
+                    op.hitOperation();
+                    flag &= false;
+                } else if ("split".equalsIgnoreCase(input)) {
+                    if(!op.splitOperation())
+                        count = 1;
+                    flag &= false;
+                } else if (canBeDouble && ("dd".equalsIgnoreCase(input) || "double down".equalsIgnoreCase(input))) {
+                    flag &= op.doubleDownOperation();
+                } else if ("stand".equalsIgnoreCase(input) || cardSet.getStand()) {
+                    op.standOperation();
+                    flag &= true;
+                } else {
+                    System.out.println("Input error");
+                    flag &= false;
+                    count = 1;
+                }
+            }
+
+        }
+        return flag;
+
+    }
+    private String chooseOperation(boolean cardSetSplittable, boolean carSetDouble){
+        String input;
+        String options = "Hit, stand";
+        if (carSetDouble) {
+            options += ", double down";
+        }
+        if (cardSetSplittable && carSetDouble) {
+            options += ", split";
+        }
+        options += " ?";
+        do {
+            System.out.println(options);
+            input = getInput();
+        } while (!isOperationInputValid(input));
+        return input;
+    }
 
 }

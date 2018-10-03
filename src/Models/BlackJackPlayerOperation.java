@@ -1,12 +1,9 @@
 package Models;
 
-import static Models.Constants.CARDS_LIMIT;
-import static Models.Constants.CARDS_NUM_LIMIT;
-import static Models.Constants.CARDS_SUIT_LIMIT;
 
 public class BlackJackPlayerOperation extends CardGamePlayerOperation{
 
-    private static CardGenerator cardGenerator;
+    private CardGenerator cardGenerator;
     private BlackJackPlayer player;
     private int cardSetIndex;
 
@@ -14,7 +11,8 @@ public class BlackJackPlayerOperation extends CardGamePlayerOperation{
         super(player.getCurrentCardSet(cardSetIndex));
         this.cardSetIndex = cardSetIndex;
         this.player = player;
-        defaultCardGenerator();
+        this.cardGenerator = CardGenerator.getInstanceOfCardGenerator();
+
     }
     public BlackJackPlayerOperation(BlackJackPlayer player,int cardSetIndex, CardGenerator cardGenerator) {
         super(player.getCurrentCardSet(cardSetIndex));
@@ -22,12 +20,7 @@ public class BlackJackPlayerOperation extends CardGamePlayerOperation{
         this.cardGenerator = cardGenerator;
         this.player = player;
     }
-    public static CardGenerator defaultCardGenerator() {
-        if(cardGenerator == null){
-            cardGenerator = new CardGenerator(CARDS_LIMIT,CARDS_NUM_LIMIT,CARDS_SUIT_LIMIT);
-        }
-        return cardGenerator;
-    }
+
     public void setPlayer(BlackJackPlayer player) {
         this.player = player;
     }
@@ -49,14 +42,15 @@ public class BlackJackPlayerOperation extends CardGamePlayerOperation{
         dealCard();
         displayCardSetInfo();
     }
-    public void splitOperation() {
+    public boolean splitOperation() {
         if (splitCurrentCards()){
             dealCard(cardSetIndex);
             dealCard(cardSetIndex+1);
             System.out.println("Split succeeded");
-        } else {
-            System.out.println("Split failed.");
+            return true;
         }
+        System.out.println("Split failed. Check your options and money :)");
+        return false;
     }
     public boolean doubleDownOperation() {
 
@@ -107,6 +101,5 @@ public class BlackJackPlayerOperation extends CardGamePlayerOperation{
         int cardSetScore = cardSet.calculateScore();
         System.out.println("current score for this hand is: " + cardSetScore);
         if(cardSetScore > 21) System.out.println("Score bust.");
-        System.out.println();
     }
 }

@@ -10,7 +10,7 @@ class CardGame {
     
     CardGame() { }
     CardGame(int cardsNumLimit, int cardsKind, int suitKind) {
-        cardGenerator = new CardGenerator(cardsNumLimit, cardsKind, suitKind);
+        cardGenerator = CardGenerator.getInstanceOfCardGenerator(cardsNumLimit,cardsKind,suitKind);
         players = new ArrayList<>();
     }
 
