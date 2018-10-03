@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5f60e305-eb97-4b2d-8036-333e2e37b97c" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/BlackJack.java" afterPath="$PROJECT_DIR$/src/BlackJack.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/CardGame.java" afterPath="$PROJECT_DIR$/src/CardGame.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Models/CardGenerator.java" afterPath="$PROJECT_DIR$/src/Models/CardGenerator.java" />
-    </list>
+    <list default="true" id="5f60e305-eb97-4b2d-8036-333e2e37b97c" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -111,8 +107,8 @@
       <file leaf-file-name="BlackJack.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/BlackJack.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="810">
-              <caret line="54" column="5" lean-forward="true" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
+            <state relative-caret-position="-2184">
+              <caret line="74" column="32" lean-forward="true" selection-start-line="74" selection-start-column="32" selection-end-line="74" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#isOperationInputValid#0;class#BlackJack#0" expanded="false" />
@@ -121,47 +117,6 @@
                 <element signature="method#isAllPlayerQuit#0;class#BlackJack#0" expanded="false" />
                 <element signature="method#displayAllPlayerAssets#0;class#BlackJack#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JAVA/" pinned="false" current-in-tab="false">
-        <entry file="uml://JAVA/">
-          <provider selected="true" editor-type-id="UmlEditorProvider">
-            <state>
-              <ID>JAVA</ID>
-              <OriginalElement />
-              <nodes>
-                <node x="0.0" y="375.0">com</node>
-                <node x="0.0" y="227.0">netscape</node>
-                <node x="364.0" y="227.0">oracle</node>
-                <node x="0.0" y="449.0">org</node>
-                <node x="1.5" y="79.0">BlackJack</node>
-                <node x="194.0" y="153.0">resources</node>
-                <node x="157.0" y="0.0">toolbarButtonGraphics</node>
-                <node x="314.0" y="375.0">sun</node>
-                <node x="0.0" y="153.0">META-INF</node>
-                <node x="153.0" y="449.0">jdk</node>
-                <node x="168.0" y="301.0">apple</node>
-                <node x="158.0" y="375.0">java</node>
-                <node x="0.0" y="0.0">CardGame</node>
-                <node x="333.0" y="301.0">javax</node>
-                <node x="188.0" y="227.0">Models</node>
-                <node x="0.0" y="301.0">javafx</node>
-                <node x="303.0" y="449.0">Main</node>
-              </nodes>
-              <notes />
-              <edges>
-                <edge source="BlackJack" target="CardGame">
-                  <point x="0.0" y="-14.5" />
-                  <point x="0.0" y="14.5" />
-                </edge>
-              </edges>
-              <settings layout="Hierarchic Group" zoom="0.5682730923694779" x="-118.66784452296815" y="312.33215547703185" />
-              <SelectedNodes />
-              <Categories />
-              <SCOPE>All</SCOPE>
-              <VISIBILITY>private</VISIBILITY>
             </state>
           </provider>
         </entry>
@@ -579,16 +534,15 @@
       <workItem from="1538505272254" duration="2155000" />
       <workItem from="1538512561236" duration="2527000" />
       <workItem from="1538521930636" duration="15959000" />
-      <workItem from="1538575770933" duration="7957000" />
+      <workItem from="1538575770933" duration="8160000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="89166000" />
+    <option name="totallyTimeSpent" value="89369000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="777" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -598,7 +552,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48854962" sideWeight="0.4806139" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48854962" sideWeight="0.5193861" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48710167" sideWeight="0.5193861" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1131,10 +1085,15 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/blackJack design.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/BlackJack.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="54" column="5" lean-forward="true" selection-start-line="54" selection-start-column="5" selection-end-line="54" selection-end-column="5" />
+        <state relative-caret-position="-2184">
+          <caret line="74" column="32" lean-forward="true" selection-start-line="74" selection-start-column="32" selection-end-line="74" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#isOperationInputValid#0;class#BlackJack#0" expanded="false" />
