@@ -23,9 +23,8 @@ public class Main {
             }
         }
 
-        BlackJack blackJack = new BlackJack(CARDS_LIMIT,CARDS_NUM_LIMIT,CARDS_SUIT_LIMIT,numOfPlayers,mode);
+        BlackJack blackJack = new BlackJack(numOfPlayers,mode);
         blackJack.start();
-        blackJack.displayAllPlayerAssets();
         while (!blackJack.play());
 
         System.out.println("\nThanks for playing! Goodbye!");

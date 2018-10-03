@@ -18,6 +18,10 @@ public class CardGenerator {
         this.suitKind = suitKind;
     }
     public Card getACard() {
+        if(count >= cardsLimit){
+            System.out.println("Run out of cards. Please reset card generator.");
+            return null;
+        }
         Random rand = new Random();
         int x = rand.nextInt(cardsKind);
         int y = rand.nextInt(suitKind);
@@ -25,7 +29,6 @@ public class CardGenerator {
             x = rand.nextInt(cardsKind);
             y = rand.nextInt(suitKind);
         }
-        // todo:if run out of cards
         count ++;
         remaining[x * suitKind+ y] = true;
 

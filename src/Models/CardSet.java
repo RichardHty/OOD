@@ -2,7 +2,6 @@ package Models;
 
 import java.util.*;
 
-import static Models.Constants.SPLIT_LIMIT;
 
 public class CardSet {
     private List<Card> currentCards;
@@ -10,7 +9,6 @@ public class CardSet {
     private int score;
     private Map<String,Integer> cards;
     private double bet;
-//    private int count;
     private boolean stand;
     CardSet(){
         currentCards = new ArrayList<>();

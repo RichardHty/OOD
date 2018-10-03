@@ -30,18 +30,10 @@ public class Card {
         return score;
     }
 
-    public String getFace() {
-        return face;
-    }
-
-    public String getSuit() {
-        return suit;
-    }
 
     @Override
     public String toString() {
         return "Card{" +
-//                "score='" + score + '\'' +
                 "face='" + face + '\'' +
                 ", suit='" + suit + '\'' +
                 '}';

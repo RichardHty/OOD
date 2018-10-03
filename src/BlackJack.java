@@ -10,99 +10,117 @@ public class BlackJack extends CardGame{
     private int currentPlayerAmount;
     private int mode;
     private int dealerIndex;
-    private double pot;
     private Scanner scanner ;
+    private List<BlackJackPlayer> playerList;
+    private BlackJackPlayerOperation op;
+    private BlackJackPlayer dealer;
 
-
+    BlackJack(int numOfPlayers, int mode) {
+        this.mode = mode;
+        this.currentPlayerAmount = numOfPlayers;
+        this.cardGenerator = BlackJackPlayerOperation.defaultCardGenerator();
+        this.dealerIndex = 0;
+        this.scanner = new Scanner(System.in);
+        this.playerList = new ArrayList<>();
+    }
     BlackJack(int cardsNumLimit, int cardsKind, int suitKind, int numOfPlayers, int mode) {
         super(cardsNumLimit,cardsKind, suitKind);
         this.currentPlayerAmount = numOfPlayers;
         this.mode = mode;
         this.dealerIndex = 0;
         this.scanner = new Scanner(System.in);
+        this.playerList = new ArrayList<>();
     }
-    public void start() {
 
+    public void start() {
+        // set dealer, set user name
         if(mode == Constants.MODE_PLAYER_PLAYER) {
             Random rand = new Random();
             dealerIndex = rand.nextInt(currentPlayerAmount);
-        } else if (mode == Constants.MODE_PLAYER_COMPUTER) {
-
-        } else {
-
         }
         for(int i=0;i<currentPlayerAmount;i++) {
             if(i == dealerIndex && mode == Constants.MODE_PLAYER_COMPUTER){
-                players.add(new Player());
+                playerList.add(new BlackJackPlayer());
                 continue;
             }
             System.out.println("What is your name: ");
-            players.add(new Player(getInput()));
+            playerList.add(new BlackJackPlayer(getInput()));
         }
-        players.get(dealerIndex).setDealer();
-        System.out.println(players.get(dealerIndex).getuName()+", you are the dealer.");
-    }
-    private void dealCard(Player playerToReceiveCard, int index){
+        playerList.get(dealerIndex).setDealer();
+        this.dealer = playerList.get(dealerIndex);
 
-        Card card = cardGenerator.getACard();
-        playerToReceiveCard.addCardToCardSet(card, index);
+        op = new BlackJackPlayerOperation(playerList.get(dealerIndex),0, cardGenerator);
 
+        displayAllPlayerAssets();
     }
+    public boolean play() {
+
+        // deal two cards for each player
+        for(int i=0;i<2;i++){
+            for(BlackJackPlayer p : playerList) {
+                op.setPlayer(p);
+                op.dealCard();
+            }
+        }
+
+        displayDealerCardShowing();
+        playerSetBet();
+        playerChooseOperation();
+
+        // display result for dealer
+        dealerHitUntilFinished();
+        System.out.println("For dealer");
+        op.setOperationObj(dealer, 0);
+        op.displayCardSetInfo();
+
+        //display result for this round
+        displayResultThisRound();
+
+        // reset config for current players
+        List<BlackJackPlayer> currentPlayers = new ArrayList<>(playerList);
+        boolean flag = isAllPlayerQuit(currentPlayers);
+        playerList = currentPlayers;
+        cardGenerator.reset();
+        return flag;
+    }
+
+    private String getInput()
+    {
+        return scanner.nextLine();
+    }
+    private boolean isOperationInputValid(String passedString) {
+        return ("hit".equalsIgnoreCase(passedString)  ||
+                "stand".equalsIgnoreCase(passedString) ||
+                "split".equalsIgnoreCase(passedString) ||
+                "dd".equalsIgnoreCase(passedString) ||
+                "double down".equalsIgnoreCase(passedString)) ;
+    }
+
     private void dealerHitUntilFinished() {
-        while (players.get(dealerIndex).getCurrentCards().get(0).calculateScore() <= 17)
+        op.setOperationObj(playerList.get(dealerIndex), 0);
+        while (playerList.get(dealerIndex).getCurrentCards().get(0).calculateScore() <= 17)
         {
-            dealCard(players.get(dealerIndex),0);
+            op.dealCard();
         }
     }
-    private List<Boolean> playerWins(Player p) {
-        // if both player and dealer scores are = to 21 dealer wins
-        // if both player and dealer score are over 21 then dealer wins
-        // if player's score is <= 21 and players score is greater than dealers score then player wins.
-        //if dealer's score is > 21 and player's score is <= 21 then players wins.
-        int dealerScore = players.get(dealerIndex).getCurrentCardSet(0).calculateScore();
+    private List<Boolean> carSetWinnerCalculation(Player p) {
+        int dealerScore = playerList.get(dealerIndex).getCurrentCardSet(0).calculateScore();
         List<Boolean> list = new ArrayList<>();
         List<CardSet> cards = p.getCurrentCards();
-        for(int i=0;i<cards.size();i++){
-            int handScore = cards.get(i).calculateScore();
+        for(CardSet cardSet:cards){
+            int handScore = cardSet.calculateScore();
             if((handScore == 21 && dealerScore != 21) ||
                     (handScore <  21 && dealerScore < handScore) ||
                     (handScore <  21 && dealerScore > 21)) {
-                //Player wins
                 list.add(true);
             } else {
-                //Dealer wins
                 list.add(false);
             }
         }
         return list;
     }
-    private void displayCardSetAndScore(CardSet cardSet){
-
-        for (Card card : cardSet.getCurrentCards())
-        {
-            System.out.println(card.toString());
-        }
-        int cardSetScore = cardSet.calculateScore();
-        System.out.println("current score for this hand is: " + cardSetScore);
-        if(cardSetScore > 21) System.out.println("Score busted.");
-        System.out.println();
-    }
-
-
-    private void displayDealerCardShowing(){
-        System.out.println("\nDealer is showing:\n"+players.get(dealerIndex).getCurrentCardSet(0).getCard(0).toString());
-    }
-
-     public boolean play() {
-
-        for(int i=0;i<2;i++){
-            for(Player p : players) {
-                dealCard(p, 0);
-            }
-        }
-
-        displayDealerCardShowing();
-        for (Player p:players){
+    private void playerSetBet() {
+        for (BlackJackPlayer p:playerList){
             if(p.isDealer()) {
                 continue;
             }
@@ -111,27 +129,18 @@ public class BlackJack extends CardGame{
                 System.out.println("Please enter a valid number(you now have "+p.getAsset()+" can be used): ");
             }
         }
-        int count = players.size() - 1;
-        boolean[] quit = new boolean[players.size()];
-//        boolean[] firstTime = new boolean[players.size()];
+    }
+    private void playerChooseOperation() {
+        int count = playerList.size() - 1;
+        boolean[] quit = new boolean[playerList.size()];
+
         while(count > 0 ){
-            for (int i=0;i<players.size();i++){
-                Player p = players.get(i);
+            for (int i=0;i<playerList.size();i++){
+                BlackJackPlayer p = playerList.get(i);
                 if (p.isDealer() || quit[i]){
                     continue;
                 }
-//                if(!firstTime[i]){
-//                    System.out.println(p.getuName()+", you get");
-//                    for(int j = 0;j<p.getCurrentCardSetNum();j++){
-//                        System.out.println("For hand "+(j+1)+",");
-//                        displayCardSetAndScore(p.getCurrentCardSet(j));
-//                        System.out.print(p.getuName()+", what is your bet? ");
-//                        while(!p.setBet(Double.parseDouble(getInput()),0)){
-//                            System.out.println("Please enter a valid number(you now have "+p.getAsset()+" can be used): ");
-//                        }
-//                    }
-//                    firstTime[i] = true;
-//                }
+
                 if(operationForEachCardSet(p)) {
                     quit[i] = true;
                     count --;
@@ -139,21 +148,15 @@ public class BlackJack extends CardGame{
 
             }
         }
+    }
 
-        dealerHitUntilFinished();
-        System.out.println("For dealer");
-        displayCardSetAndScore(players.get(dealerIndex).getCurrentCardSet(0));
-        for(Player p:players) {
-            if(p.isDealer()){
-                continue;
-            }
-            determineWinOrLoss(p);
-            displayPlayerAsset(p);
-        }
+    private void displayDealerCardShowing(){
+        System.out.println("Dealer is showing:\n"+playerList.get(dealerIndex).getCurrentCardSet(0).getCard(0).toString());
+    }
+    private boolean isAllPlayerQuit(List<BlackJackPlayer> currentPlayers) {
         boolean flag = true;
-        List<Player> currentPlayers = new ArrayList<>(players);
-        for(Player p:players) {
-            p.resetCardsAndBet();
+        for(BlackJackPlayer p:playerList) {
+            p.reset();
             if(p.isDealer() || p.broken() ){
                 flag &= true;
                 continue;
@@ -163,27 +166,46 @@ public class BlackJack extends CardGame{
             String input = getInput();
             if("n".equalsIgnoreCase(input) || "no".equalsIgnoreCase(input)) {
                 currentPlayers.remove(p);
-                count --;
             } else {
                 flag &= false;
             }
         }
-        players = currentPlayers;
-        cardGenerator.reset();
         return flag;
     }
-    private void displayPlayerAsset(Player player){
+    private void displayResultThisRound() {
+        for(BlackJackPlayer p:playerList) {
+            if(p.isDealer()){
+                continue;
+            }
+            displayWinOrLoss(p);
+            displayPlayerAsset(p);
+        }
+    }
+    private void displayPlayerAsset(BlackJackPlayer player){
         System.out.println(player);
     }
-    private boolean operationForEachCardSet(Player userPlayer){
+    private void displayAllPlayerAssets() {
+        System.out.println();
+        for(BlackJackPlayer p : playerList) {
+            if(p.isDealer()) {
+                continue;
+            }
+            System.out.println(p);
+        }
+    }
+
+    private boolean operationForEachCardSet(BlackJackPlayer userPlayer){
         String input;
         boolean flag = true;
         int hands = userPlayer.getCurrentCardSetNum();
+        op.setOperationObj(userPlayer,0);
 
         System.out.println(userPlayer.getuName()+", you get");
+
         for(int i=0;i<hands;i++){
             CardSet cardSet = userPlayer.getCurrentCardSet(i);
             boolean cardSetSplittable = cardSet.isCurrentCardsSplittable();
+            op.setCardSetIndex(i);
 
             if(!cardSet.getStand() && cardSet.calculateScore() >= 21){
                 if(cardSet.calculateScore() == 21){
@@ -191,7 +213,7 @@ public class BlackJack extends CardGame{
                 }
                 cardSet.setStand();
                 System.out.println("For hand "+(i+1)+",");
-                displayCardSetAndScore(cardSet);
+                op.displayCardSetInfo();
 
             }
             if(cardSet.getStand()){
@@ -199,35 +221,21 @@ public class BlackJack extends CardGame{
                 continue;
             }
             System.out.print("For hand "+(i+1)+",");
-            displayCardSetAndScore(cardSet);
+            op.displayCardSetInfo();
 
-            input = chooseOperation(cardSetSplittable);
+            boolean canBeDouble = userPlayer.getAsset() > cardSet.getBet();
+            input = chooseOperation(cardSetSplittable, canBeDouble);
 
             if ("hit".equalsIgnoreCase(input)) {
-                dealCard(userPlayer, i);
+                op.hitOperation();
                 flag &= false;
-                displayCardSetAndScore(cardSet);
             } else if("split".equalsIgnoreCase(input)){
-                if (userPlayer.splitCurrentCards(i)){
-                    dealCard(userPlayer, i);
-                    dealCard(userPlayer, i+1);
-                    System.out.println("Split succeeded");
-                } else {
-                    System.out.println("Split failed.");
-                }
+                op.splitOperation();
                 flag &= false;
-            } else if("dd".equalsIgnoreCase(input)) {
-                if(!userPlayer.setBet(cardSet.getBet(), i)){
-                    flag &= false;
-                    continue;
-                }
-                dealCard(userPlayer, i);
-                cardSet.setStand();
-                displayCardSetAndScore(cardSet);
-                flag &= true;
+            } else if("dd".equalsIgnoreCase(input) || "double down".equalsIgnoreCase(input)) {
+                flag &= op.doubleDownOperation();
             } else if("stand".equalsIgnoreCase(input) || cardSet.getStand()) {
-                displayCardSetAndScore(cardSet);
-                cardSet.setStand();
+                op.standOperation();
                 flag &= true;
             } else {
                 System.out.println("Input error");
@@ -238,55 +246,46 @@ public class BlackJack extends CardGame{
         return flag;
 
     }
-    private String chooseOperation(boolean cardSetSplitable){
+    private String chooseOperation(boolean cardSetSplittable, boolean carSetDouble){
         String input;
-        String options = "\nHit, stand, double down";
-        if(cardSetSplitable){
+        String options = "Hit, stand";
+        if (carSetDouble) {
+            options += ", double down";
+        }
+        if (cardSetSplittable) {
             options += ", split";
         }
         options += " ?";
         do {
             System.out.println(options);
             input = getInput();
-        } while (!isInputStayOrHit(input));
+        } while (!isOperationInputValid(input));
         return input;
     }
-    private String getInput()
-    {
-        return scanner.nextLine();
-    }
-    private boolean isInputStayOrHit(String passedString)
-    {
-        return ("hit".equalsIgnoreCase(passedString)  ||
-                "stand".equalsIgnoreCase(passedString) ||
-                "split".equalsIgnoreCase(passedString) ||
-                "dd".equalsIgnoreCase(passedString)) ;
-    }
 
-    private void determineWinOrLoss(Player userPlayer){
-        List<Boolean> wonCardSetsForThisPlayer = playerWins(userPlayer);
+
+    private void displayWinOrLoss(BlackJackPlayer userPlayer){
+        List<Boolean> wonCardSetsForThisPlayer = carSetWinnerCalculation(userPlayer);
         int i = 0;
+        StringBuilder res = new StringBuilder();
+        String head = "Player " + userPlayer.getuName() + ", your card set ";
+        res.append(head);
         for(Boolean flag: wonCardSetsForThisPlayer){
+            res.setLength(head.length());
+            res.append(i+1) ;
+            double bet = userPlayer.getCurrentCardSet(i).getBet();
             if (flag) {
-                System.out.println("Player "+userPlayer.getuName()+", your card set "+(i+1)+" wins! You won "+userPlayer.getCurrentCardSet(i).getBet());
+                res.append(" wins! You won ");
                 userPlayer.updateAsset(i,Constants.WIN);
             } else {
-//                System.out.println("Dealer "+players[dealerIndex].getuName()+" wins!");
-                System.out.println("Player "+userPlayer.getuName()+", your card set "+(i+1)+" lost. You lost "+userPlayer.getCurrentCardSet(i).getBet());
+                res.append(" lost. You lost ");
                 userPlayer.updateAsset(i,Constants.LOSE);
             }
+            res.append(bet);
+            System.out.println(res.toString());
             i++;
         }
-        int dealerScore = players.get(dealerIndex).getCurrentCardSet(0).calculateScore();
-        System.out.println("Dealer has score: " + dealerScore);
     }
-    public void displayAllPlayerAssets() {
-        System.out.println();
-        for(Player p : players) {
-            if(p.isDealer()) {
-                continue;
-            }
-            System.out.println(p);
-        }
-    }
+
+
 }
